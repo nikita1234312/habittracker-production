@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои привычки</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f1f5f9;
+            min-height: 100vh;
+            padding: 60px 20px 40px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .page-header::after {
+            content: '';
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 4px;
+            background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+            border-radius: 2px;
+        }
+
+        .page-title {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(90deg, #f1f5f9, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .page-subtitle {
+            font-size: 19px;
+            color: #94a3b8;
+            font-weight: 500;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .habits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 28px;
+        }
+
+        .habit-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 28px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .habit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .habit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .habit-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .habit-type {
+            font-size: 14px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .type-good {
+            background: rgba(34, 197, 94, 0.15);
+            color: #6ee7b7;
+        }
+
+        .type-bad {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+        }
+
+        .habit-description {
+            color: #cbd5e1;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 22px;
+            min-height: 60px;
+        }
+
+        .habit-details {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+            color: #94a3b8;
+        }
+
+        .detail-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(56, 189, 248, 0.1);
+            border-radius: 6px;
+            color: #38bdf8;
+        }
+
+        .days-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .day-badge {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(56, 189, 248, 0.1);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #94a3b8;
+        }
+
+        .day-badge.active {
+            background: rgba(56, 189, 248, 0.25);
+            color: #38bdf8;
+        }
+
+        .habit-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .edit-btn {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+        }
+
+        .edit-btn:hover {
+            background: rgba(56, 189, 248, 0.25);
+        }
+
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+        }
+
+        .delete-btn:hover {
+            background: rgba(239, 68, 68, 0.25);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 20px;
+            border: 1px dashed rgba(56, 189, 248, 0.3);
+        }
+
+        .empty-title {
+            font-size: 28px;
+            margin-bottom: 16px;
+            color: #cbd5e1;
+        }
+
+        .empty-text {
+            color: #94a3b8;
+            max-width: 500px;
+            margin: 0 auto 25px;
+            line-height: 1.6;
+        }
+
+        .add-habit-btn {
+            background: linear-gradient(90deg, #0ea5e9, #0284c7);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 14px 32px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(14, 165, 233, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .add-habit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(14, 165, 233, 0.55);
+        }
+
+        /* Стили для боковой навигации */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 260px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-right: 1px solid rgba(56, 189, 248, 0.3);
+            transform: translateX(-200px); /* Навигация частично видна */
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            padding-top: 80px;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-trigger {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 60px;
+            background: transparent;
+            cursor: pointer;
+            z-index: 999;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 20px;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 12px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 500;
+            border-radius: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu a.active {
+            background: rgba(56, 189, 248, 0.25);
+            color: #38bdf8;
+        }
+
+        .sidebar-icon {
+            font-size: 22px;
+            width: 28px;
+            text-align: center;
+        }
+
+        /* Иконки, которые всегда видны */
+        .sidebar-icons {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 60px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-right: 1px solid rgba(56, 189, 248, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 80px;
+            z-index: 998;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar-icon-item {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 16px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #94a3b8;
+            font-size: 20px;
+            position: relative;
+        }
+
+        .sidebar-icon-item:hover {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+        }
+
+        .sidebar-icon-item.active {
+            background: rgba(56, 189, 248, 0.25);
+            color: #38bdf8;
+        }
+
+        .icon-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .habits-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-title {
+                font-size: 32px;
+            }
+            
+            .page-subtitle {
+                font-size: 17px;
+            }
+            
+            .sidebar {
+                width: 240px;
+                padding-top: 70px;
+                transform: translateX(-180px);
+            }
+            
+            .sidebar-icons {
+                width: 50px;
+                padding-top: 70px;
+            }
+            
+            .sidebar-icon-item {
+                width: 36px;
+                height: 36px;
+                margin: 12px 0;
+            }
+            
+            .sidebar-menu a {
+                font-size: 17px;
+                padding: 14px 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .habit-actions {
+                flex-direction: column;
+            }
+            
+            .page-title {
+                font-size: 28px;
+            }
+            
+            .sidebar {
+                width: 220px;
+                transform: translateX(-160px);
+            }
+            
+            .sidebar-icons {
+                width: 45px;
+                padding-top: 60px;
+            }
+            
+            .sidebar-icon-item {
+                width: 32px;
+                height: 32px;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Боковая панель с иконками, которая всегда видна -->
+    <div class="sidebar-icons" id="sidebarIcons">
+        <div class="sidebar-icon-item active" data-page="home">
+            <span>🏠</span>
+        </div>
+        <div class="sidebar-icon-item" data-page="habits">
+            <span>✅</span>
+        </div>
+        <div class="sidebar-icon-item" data-page="add">
+            <span>➕</span>
+        </div>
+        <div class="sidebar-icon-item" data-page="stats">
+            <span>📊</span>
+        </div>
+        <div class="sidebar-icon-item" data-page="calendar">
+            <span>📅</span>
+        </div>
+        <div class="sidebar-icon-item" data-page="notifications">
+            <span>🔔</span>
+            <span class="icon-badge">10</span>
+        </div>
+        <div class="sidebar-icon-item" data-page="achievements">
+            <span>🏆</span>
+            <span class="icon-badge">5</span>
+        </div>
+        <div class="sidebar-icon-item" data-page="settings">
+            <span>⚙️</span>
+        </div>
+        <div class="sidebar-icon-item" data-page="help">
+            <span>❓</span>
+        </div>
+        <div class="sidebar-icon-item" data-page="profile">
+            <span>👤</span>
+        </div>
+        <div class="sidebar-icon-item" data-page="messages">
+            <span>💬</span>
+        </div>
+        <div class="sidebar-icon-item" data-page="support">
+            <span>❗</span>
+        </div>
+        <div class="sidebar-icon-item" data-page="store">
+            <span>🛒</span>
+        </div>
+    </div>
+
+    <!-- Полная боковая навигация -->
+    <nav class="sidebar" id="sidebar">
+        <ul class="sidebar-menu">
+            <li>
+                <a href="#" class="active">
+                    <span class="sidebar-icon">🏠</span>
+                    Главная
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <span class="sidebar-icon">✅</span>
+                    Мои привычки
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <span class="sidebar-icon">➕</span>
+                    Добавить привычку
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <span class="sidebar-icon">📊</span>
+                    Статистика
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <span class="sidebar-icon">📅</span>
+                    Календарь
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <span class="sidebar-icon">🔔</span>
+                    Уведомления
+                    <span class="icon-badge">10</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <span class="sidebar-icon">🏆</span>
+                    Достижения
+                    <span class="icon-badge">5</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <span class="sidebar-icon">⚙️</span>
+                    Настройки
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <span class="sidebar-icon">❓</span>
+                    Помощь
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <span class="sidebar-icon">👤</span>
+                    Профиль
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <span class="sidebar-icon">💬</span>
+                    Сообщения
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <span class="sidebar-icon">❗</span>
+                    Поддержка
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <span class="sidebar-icon">🛒</span>
+                    Магазин
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Мои привычки</h1>
+            <p class="page-subtitle">Отслеживайте свои привычки и отмечайте прогресс каждый день</p>
+        </div>
+
+        <!-- Пример данных привычек (в реальном проекте будет генерироваться сервером) -->
+        <div class="habits-grid">
+            <!-- Привычка 1 -->
+            <div class="habit-card">
+                <div class="habit-header">
+                    <div>
+                        <h3 class="habit-title">Утренняя зарядка</h3>
+                        <span class="habit-type type-good">Полезная</span>
+                    </div>
+                </div>
+                <p class="habit-description">Делать 15 минут после пробуждения для бодрости и энергии на весь день.</p>
+                
+                <div class="habit-details">
+                    <div class="detail-item">
+                        <div class="detail-icon">⏰</div>
+                        <span>Время: 07:30</span>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">⏱️</div>
+                        <span>Длительность: 20 минут</span>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">📅</div>
+                        <div>
+                            <span>Дни недели:</span>
+                            <div class="days-container">
+                                <span class="day-badge active">Пн</span>
+                                <span class="day-badge active">Вт</span>
+                                <span class="day-badge active">Ср</span>
+                                <span class="day-badge active">Чт</span>
+                                <span class="day-badge active">Пт</span>
+                                <span class="day-badge">Сб</span>
+                                <span class="day-badge">Вс</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="habit-actions">
+                    <button class="action-btn edit-btn">✏️ Редактировать</button>
+                    <button class="action-btn delete-btn">🗑️ Удалить</button>
+                </div>
+            </div>
+
+            <!-- Привычка 2 -->
+            <div class="habit-card">
+                <div class="habit-header">
+                    <div>
+                        <h3 class="habit-title">Чтение книг</h3>
+                        <span class="habit-type type-good">Полезная</span>
+                    </div>
+                </div>
+                <p class="habit-description">Читать не менее 20 страниц в день перед сном для развития и расслабления.</p>
+                
+                <div class="habit-details">
+                    <div class="detail-item">
+                        <div class="detail-icon">⏰</div>
+                        <span>Время: 21:00</span>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">⏱️</div>
+                        <span>Длительность: 30 минут</span>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">📅</div>
+                        <div>
+                            <span>Дни недели:</span>
+                            <div class="days-container">
+                                <span class="day-badge active">Пн</span>
+                                <span class="day-badge">Вт</span>
+                                <span class="day-badge active">Ср</span>
+                                <span class="day-badge">Чт</span>
+                                <span class="day-badge active">Пт</span>
+                                <span class="day-badge active">Сб</span>
+                                <span class="day-badge active">Вс</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="habit-actions">
+                    <button class="action-btn edit-btn">✏️ Редактировать</button>
+                    <button class="action-btn delete-btn">🗑️ Удалить</button>
+                </div>
+            </div>
+
+            <!-- Привычка 3 -->
+            <div class="habit-card">
+                <div class="habit-header">
+                    <div>
+                        <h3 class="habit-title">Курение</h3>
+                        <span class="habit-type type-bad">Вредная</span>
+                    </div>
+                </div>
+                <p class="habit-description">Сократить количество сигарет до 5 в день и постепенно отказаться от этой привычки.</p>
+                
+                <div class="habit-details">
+                    <div class="detail-item">
+                        <div class="detail-icon">⏰</div>
+                        <span>Время: 12:00</span>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">⏱️</div>
+                        <span>Длительность: 10 минут</span>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">📅</div>
+                        <div>
+                            <span>Дни недели:</span>
+                            <div class="days-container">
+                                <span class="day-badge">Пн</span>
+                                <span class="day-badge active">Вт</span>
+                                <span class="day-badge">Ср</span>
+                                <span class="day-badge active">Чт</span>
+                                <span class="day-badge">Пт</span>
+                                <span class="day-badge active">Сб</span>
+                                <span class="day-badge">Вс</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="habit-actions">
+                    <button class="action-btn edit-btn">✏️ Редактировать</button>
+                    <button class="action-btn delete-btn">🗑️ Удалить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Обработчик для боковой навигации
+    const sidebar = document.getElementById('sidebar');
+    const sidebarIcons = document.getElementById('sidebarIcons');
+    
+    // Таймер для плавного скрытия навигации
+    let sidebarTimeout;
+    
+    // Открытие боковой панели при наведении на иконки
+    sidebarIcons.addEventListener('mouseenter', () => {
+        clearTimeout(sidebarTimeout);
+        sidebar.classList.add('active');
+    });
+    
+    // Открытие боковой панели при наведении на саму панель
+    sidebar.addEventListener('mouseenter', () => {
+        clearTimeout(sidebarTimeout);
+        sidebar.classList.add('active');
+    });
+    
+    // Закрытие боковой панели при уходе курсора
+    sidebar.addEventListener('mouseleave', () => {
+        // Запускаем таймер для плавного скрытия
+        sidebarTimeout = setTimeout(() => {
+            sidebar.classList.remove('active');
+        }, 300);
+    });
+    
+    // Также закрываем при уходе с иконок
+    sidebarIcons.addEventListener('mouseleave', (e) => {
+        // Проверяем, не находится ли курсор на самой боковой панели
+        const sidebarRect = sidebar.getBoundingClientRect();
+        const x = e.clientX;
+        const y = e.clientY;
+        
+        // Если курсор ушел на панель, не закрываем
+        if (x >= sidebarRect.left && x <= sidebarRect.right && 
+            y >= sidebarRect.top && y <= sidebarRect.bottom) {
+            return;
+        }
+        
+        // Запускаем таймер для плавного скрытия
+        sidebarTimeout = setTimeout(() => {
+            sidebar.classList.remove('active');
+        }, 300);
+    });
+    
+    // Отменяем скрытие, если курсор вернулся на панель или иконки
+    sidebar.addEventListener('mouseenter', () => {
+        clearTimeout(sidebarTimeout);
+    });
+    
+    sidebarIcons.addEventListener('mouseenter', () => {
+        clearTimeout(sidebarTimeout);
+    });
+    
+    // Обработка кликов по иконкам
+    document.querySelectorAll('.sidebar-icon-item').forEach(icon => {
+        icon.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Убираем активный класс у всех иконок
+            document.querySelectorAll('.sidebar-icon-item').forEach(i => {
+                i.classList.remove('active');
+            });
+            // Добавляем активный класс текущей иконке
+            this.classList.add('active');
+            
+            // Закрываем боковую панель
+            sidebar.classList.remove('active');
+            
+            // Переход на соответствующую страницу
+            const page = this.getAttribute('data-page');
+            const pageUrls = {
+                'home': 'index.html',
+                'habits': 'habits.html', 
+                'add': 'add-habit.html',
+                'stats': 'stats.html',
+                'calendar': 'calendar.html',
+                'notifications': 'notifications.html',
+                'achievements': 'achievements.html',
+                'settings': 'settings.html',
+                'help': 'help.html',
+                'profile': 'profile.html',
+                'messages': 'messages.html',
+                'support': 'support.html',
+                'store': 'store.html'
+            };
+            
+            if (pageUrls[page]) {
+                window.location.href = pageUrls[page];
+            }
+        });
+    });
+    
+    // Обработка кликов по ссылкам в боковой панели
+    document.querySelectorAll('.sidebar-menu a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Убираем активный класс у всех ссылок
+            document.querySelectorAll('.sidebar-menu a').forEach(a => {
+                a.classList.remove('active');
+            });
+            // Добавляем активный класс текущей ссылке
+            this.classList.add('active');
+            // Закрываем боковую панель
+            sidebar.classList.remove('active');
+            
+            // Переход по ссылке
+            const href = this.getAttribute('href');
+            if (href) {
+                window.location.href = href;
+            }
+        });
+    });
+    
+    // Автоматическое выделение активной страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        
+        // Обновляем активные ссылки в меню
+        document.querySelectorAll('.sidebar-menu a').forEach(link => {
+            if (link.getAttribute('href') === currentPage) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+        
+        // Обновляем активные иконки
+        const pageToDataPage = {
+            'index.html': 'home',
+            'habits.html': 'habits',
+            'add-habit.html': 'add',
+            'stats.html': 'stats',
+            'calendar.html': 'calendar',
+            'notifications.html': 'notifications',
+            'achievements.html': 'achievements',
+            'settings.html': 'settings',
+            'help.html': 'help',
+            'profile.html': 'profile',
+            'messages.html': 'messages',
+            'support.html': 'support',
+            'store.html': 'store'
+        };
+        
+        const currentDataPage = pageToDataPage[currentPage];
+        if (currentDataPage) {
+            document.querySelectorAll('.sidebar-icon-item').forEach(icon => {
+                if (icon.getAttribute('data-page') === currentDataPage) {
+                    icon.classList.add('active');
+                } else {
+                    icon.classList.remove('active');
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>
