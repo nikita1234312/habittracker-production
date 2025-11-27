@@ -1,0 +1,616 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HabitTracker - Привычки</title>
+
+    <link rel="stylesheet" href="{% static 'css/habits.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{% url 'main' %}" class="logo">HabitTracker</a>
+        <ul class="nav-links">
+            <li><a href="{% url 'main' %}">Главная</a></li>
+            <li><a href="{% url 'habits_list' %}">Привычки</a></li>
+            <li><a href="#">Достижения</a></li>
+            <li><a href="#">О нас</a></li>
+            {% if user.is_authenticated %}
+                <li class="profile-item">
+                    <a href="{% url 'profile' %}" class="profile-link">
+                        {% if profile.avatar %} 
+                            <img src="{{ profile.avatar.url }}" alt="" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
+                        {% else %}
+                            <div class="profile-avatar">{{ user.username|first }}</div>
+                        {% endif %}
+                        <span class="profile-text">Профиль</span>
+                    </a>
+                </li>
+            {% else %}
+                <li><a href="{% url 'signin' %}">Войти</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <aside class="aside">
+            <div class="aside-title">
+                <h1>Мои привычки</h1>
+            </div>
+            <nav class="aside-nav-category">
+                <h3>Категории</h3>
+                <ul>
+                    <li class="category-filter" data-category="all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-icon lucide-list"><path d="M3 5h.01"/><path d="M3 12h.01"/><path d="M3 19h.01"/><path d="M8 5h13"/><path d="M8 12h13"/><path d="M8 19h13"/></svg>
+                        Все
+                    </li>
+                    <li class="category-filter" data-category="learning">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect width="8" height="18" x="3" y="3" rx="1"/>
+                            <path d="M7 3v18"/>
+                            <path d="M20.4 18.9c.2.5-.1 1.1-.6 1.3l-1.9.7c-.5.2-1.1-.1-1.3-.6L11.1 5.1c-.2-.5.1-1.1.6-1.3l1.9-.7c.5-.2 1.1.1 1.3.6Z"/>
+                        </svg>
+                        Образование
+                    </li>
+                    <li class="category-filter" data-category="sport">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trophy-icon lucide-trophy"><path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978"/><path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978"/><path d="M18 9h1.5a1 1 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z"/><path d="M6 9H4.5a1 1 0 0 1 0-5H6"/></svg>
+                        Спорт
+                    </li>
+                    <li class="category-filter" data-category="health">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart-icon lucide-heart"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></svg>
+                        Здоровье
+                    </li>
+                    <li class="category-filter" data-category="relationships">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users-icon lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg>
+                        Отношения
+                    </li>
+                    <li class="category-filter" data-category="other">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-box-icon lucide-box"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+                        Прочее
+                    </li>
+                </ul>
+            </nav>
+            <nav class="aside-nav-filters">
+                <h3>Фильтры</h3>
+                <ul>
+                    <li class="status-filter" data-status="all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h.01"/><path d="M3 12h.01"/><path d="M3 19h.01"/><path d="M8 5h13"/><path d="M8 12h13"/><path d="M8 19h13"/></svg>
+                        Все
+                    </li>
+                    <li class="status-filter" data-status="completed">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-icon lucide-check"><path d="M20 6 9 17l-5-5"/></svg>
+                        Выполненные
+                    </li>
+                    <li class="status-filter" data-status="active">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap-icon lucide-zap"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+                        Активные
+                    </li>
+                </ul>
+            </nav>
+            <button type="button" class="btn" id="openModalAddHabit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                Добавить привычку
+            </button>
+        </aside>
+        <!-- само отображение привычек -->
+        <main class="list-habits">
+            <div class="main-category">
+                <h2>{{ category_name }}</h2>
+            </div>
+            <ul class="habits-list">
+                {% for habit in habits %}
+                <li class="habit-card" id="openInfoHabit" onclick='openHabitModal({{ habit.id }})''>
+                    <h4 class="habit-title">{{ habit.title }}</h4>
+                    <div class="habit-streak" data-days="5">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+                        </svg>
+                        <p>{{ habit.current_streak }} дней</p>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </main>
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal-window">
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <h1>Добавить привычку</h1>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="title">Название</label>
+                                <input type="text" id="title" name="title" placeholder="Введите название">
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Описание</label>
+                                <input type="text" id="description" name="description" placeholder="Введите описание">
+                            </div>
+                            <div class="form-group">
+                                <label>Тип привычки</label>
+                                <div class="type-radio-group">
+                                    <label class="radio-option">
+                                        <input type="radio" name="habit_type" value="useful" id="useful" checked>
+                                        <span class="radio-label">Полезная</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="habit_type" value="harmful" id="harmful">
+                                        <span class="radio-label">Вредная</span>
+                                    </label>    
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="category">Категории</label>
+                                <select id="category" class="category" name="category" required>
+                                    <option value="health">Здоровье</option>
+                                    <option value="sport">Спорт</option>
+                                    <option value="learning">Обучение</option>
+                                    <option value="productivity">Продуктивность</option>
+                                    <option value="finance">Финансы</option>
+                                    <option value="relationships">Отношения</option>
+                                    <option value="other" selected>Другое</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="days">Дни выполнения</label>
+                                <div class="days-grid">
+                                    <label class="day-option">
+                                        <input type="checkbox" name="days_of_week" value="mon">
+                                        <span class="day-label">Пн</span>
+                                    </label>
+                                    <label class="day-option">
+                                        <input type="checkbox" name="days_of_week" value="tue">
+                                        <span class="day-label">Вт</span>
+                                    </label>
+                                    <label class="day-option">
+                                        <input type="checkbox" name="days_of_week" value="wed">
+                                        <span class="day-label">Ср</span>
+                                    </label>
+                                    <label class="day-option">
+                                        <input type="checkbox" name="days_of_week" value="thu">
+                                        <span class="day-label">Чт</span>
+                                    </label>
+                                    <label class="day-option">
+                                        <input type="checkbox" name="days_of_week" value="fri">
+                                        <span class="day-label">Пт</span>
+                                    </label>
+                                    <label class="day-option">
+                                        <input type="checkbox" name="days_of_week" value="sat">
+                                        <span class="day-label">Сб</span>
+                                    </label>
+                                    <label class="day-option">
+                                        <input type="checkbox" name="days_of_week" value="sun">
+                                        <span class="day-label">Вс</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="reminderTime" class="form-label">Время выполнения</label>
+                                <input type="time" id="reminderTime" class="reminder-time" name="reminder_time" value="09:00" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="duration">Длительность</label>
+                                <div class="duration-input-group">
+                                    <input type="number" id="duration" name="duration_minutes" min="1" max="240" value="15" required>
+                                    <div class="duration-toggle">
+                                        <button type="button" class="duration-btn active" data-unit="minutes">мин</button>
+                                        <button type="button" class="duration-btn" data-unit="hours">час</button>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="durationUnit" name="duration_unit" value="minutes">
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" id="closeAddHabitModal">Отмена</button>
+                                <button type="submit" class="btn-primary" id="addHabitBtn">Добавить привычку</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="modalOverlayHabit">
+        <div class="modal-window-habit">
+            <div class="modal-window-header">
+                <h1 id="habitTitle"></h1>
+                <button class="close-habit-modal" id="closeInfoHabit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-window-body">
+                <div class="habit-info-section">
+                    <div class="info-item">
+                        <span class="info-label">Описание:</span>
+                        <span class="info-value" id="habitDescription"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Категория:</span>
+                        <span class="info-value category-badge" id="habitCategory"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Тип привычки:</span>
+                        <span class="info-value type-badge useful" id="habitType"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Дни выполнения:</span>
+                        <div class="days-list" id="habitDays">
+                            
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Время выполнения:</span>
+                        <span class="info-value" id="habitReminder"></span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="info-label">Длительность:</span>
+                        <span class="info-value" id="habitDuration"></span>
+                    </div>
+                    <div class="habit-statistics-section">
+                        <h2>Статистика</h2>
+                        <div class="statistics-cards">
+                            <div class="statistics-card">
+                                <span class="stat-number">15</span>
+                                <span class="stat-label">Всего выполнений</span>
+                            </div>
+                            
+                            <div class="statistics-card">
+                                <span class="stat-number">85%</span>
+                                <span class="stat-label">Успешных дней</span>
+                            </div>
+                            
+                            <div class="statistics-card">
+                                <span class="stat-number">7.5</span>
+                                <span class="stat-label">Часов всего</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="habit-actions">
+                        <button class="btn-mark-complete" id="markComplete">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 6 9 17l-5-5"/>
+                            </svg>
+                            Выполнить
+                        </button>
+                        <button class="btn-edit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-pen-icon lucide-clipboard-pen"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5.5"/><path d="M4 13.5V6a2 2 0 0 1 2-2h2"/><path d="M13.378 15.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></svg>
+                            Редактировать
+                        </button>
+                        <button class="btn-delete">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            Удалить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div class="popup-window" id="successPopup">
+        <div class="popup-header">
+            <div class="popup-text">
+                <h2>Привычка успешно добавлена</h2>
+            </div>
+            <button class="popup-close" id="closePopup" aria-label="Закрыть уведомление">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+    const modalOverlay = document.getElementById('modalOverlay');
+    const openModal = document.getElementById('openModalAddHabit');
+    const closeModal = document.getElementById('closeAddHabitModal');
+    const formHabit = document.querySelector('form');
+    
+    function getCSRFToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
+    
+    function openHabitModal(habitId) {
+        fetch(`/habits/${habitId}/`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('habitTitle').textContent = data.title;
+            document.getElementById('habitDescription').textContent = data.description;
+            document.getElementById('habitCategory').textContent = data.category;
+            
+            const typeElement = document.getElementById('habitType');
+            typeElement.textContent = data.habit_type === 'useful' ? 'Полезная' : 'Вредная';
+            typeElement.className = `info-value type-badge ${data.habit_type === 'useful' ? 'useful' : 'harmful'}`;
+            
+            updateDaysDisplay(data.days_of_week || []);
+            
+            document.querySelector('.info-item:nth-child(5) .info-value').textContent = data.reminder_time || '09:00';
+            
+            document.querySelector('.info-item:nth-child(6) .info-value').textContent = `${data.duration_minutes || 15} минут`;
+            
+            
+            const modalOverlayHabit = document.getElementById('modalOverlayHabit');
+                modalOverlayHabit.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            })
+            .catch(error => {
+                alert('Не удалось загрузить данные привычки');
+            });
+        };
+        
+        function updateDaysDisplay(daysOfWeek) {
+            const daysContainer = document.getElementById('habitDays');
+            const daysMap = {
+                'mon': { short: 'Пн', full: 'Понедельник' },
+                'tue': { short: 'Вт', full: 'Вторник' },
+                'wed': { short: 'Ср', full: 'Среда' },
+                'thu': { short: 'Чт', full: 'Четверг' },
+                'fri': { short: 'Пт', full: 'Пятница' },
+                'sat': { short: 'Сб', full: 'Суббота' },
+                'sun': { short: 'Вс', full: 'Воскресенье' }
+            };
+            
+            daysContainer.innerHTML = '';
+            
+            Object.entries(daysMap).forEach(([key, dayInfo]) => {
+                const isActive = daysOfWeek.includes(key);
+                const dayElement = document.createElement('span');
+                dayElement.className = `day-badge ${isActive ? 'active' : ''}`;
+                dayElement.textContent = dayInfo.short;
+                dayElement.title = dayInfo.full;
+                
+                daysContainer.appendChild(dayElement);
+            });
+        }
+        
+        openModal.addEventListener('click', function() {
+            modalOverlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+    });
+    
+    
+    formHabit.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const addHabitBtn = document.getElementById('addHabitBtn');
+        
+        fetch('/habits/add/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': getCSRFToken()
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert('Все четко, добавлено');
+                modalOverlay.style.display = 'none';
+
+                window.location.reload();
+            } else {
+                alert('Ошибка :(' + data.message);
+            }
+        })
+        .catch(error => {
+            alert('Ошибка сети');
+        })
+        .finally(() => {
+            addHabitBtn.textContent = 'Добавить привычку';
+            addHabitBtn.disabled = false;
+        });
+    });
+    
+    function updateHabitsList(habits) {
+        const habitsList = document.querySelector('.habits-list');
+        habitsList.innerHTML = '';
+        
+        habits.forEach(habit => {
+            const habitCard = document.createElement('li');
+            habitCard.className = 'habit-card';
+            habitCard.setAttribute('onclick', `openHabitModal(${habit.id})`);
+            
+            habitCard.innerHTML = `
+            <h4 class="habit-title">${habit.title}</h4>
+            <div class="habit-streak" data-days="5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+                    </svg>
+                    <p>${habit.current_streak} дней</p>
+                    </div>
+                    `;
+                    
+                    habitsList.appendChild(habitCard);
+                });
+            }
+            
+            document.addEventListener('DOMContentLoaded', function() {
+                const categoryFilters = document.querySelectorAll('.category-filter');
+                
+                categoryFilters.forEach(filter => {
+                    filter.addEventListener('click', function() {
+                        const category = this.dataset.category;
+                        
+                        const habitsList = document.querySelector('.habits-list');
+                        habitsList.innerHTML = '<div class="loading">Загрузка...</div>';
+                        
+                        fetch(`/habits/habits_list/?category=${category}&ajax=true`)
+                        .then(response => response.json())
+                        .then(data => {
+                            updateHabitsList(data.habits);
+                            updateCategoryTitle(data.category_name);
+                            
+                            categoryFilters.forEach(f => f.classList.remove('active'));
+                            this.classList.add('active');
+                        })
+                        .catch(error => {
+                            console.error('Ошибка:', error);
+                            habitsList.innerHTML = '<div class="error">Ошибка загрузки</div>';
+                        });
+                    });
+                });
+            });
+            
+            function updateCategoryTitle(categoryName) {
+                const categoryTitle = document.querySelector('.main-category h2');
+                categoryTitle.textContent = categoryName;
+            }
+            
+            document.addEventListener('DOMContentLoaded', function() {
+                const categoryFilters = document.querySelectorAll('.category-filter');
+                const statusFilters = document.querySelectorAll('.status-filter');
+                
+                const urlParams = new URLSearchParams(window.location.search);
+                const currentCategory = urlParams.get('category') || 'all';
+                const currentStatus = urlParams.get('status') || 'all';
+                
+                categoryFilters.forEach(filter => {
+                    if (filter.dataset.category === currentCategory) {
+                        filter.classList.add('active');
+                    }
+                    
+                    filter.addEventListener('click', function() {
+                        const category = this.dataset.category;
+                        const habitsList = document.querySelector('.habits-list');
+                        habitsList.innerHTML = '<div class="loading">Загрузка...</div>';
+                        
+                        const url = `/habits/habits_list/?category=${category}&status=${currentStatus}&ajax=true`;
+                        
+                        fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            updateHabitsList(data.habits);
+                            updateCategoryTitle(data.category_name);
+                            categoryFilters.forEach(f => f.classList.remove('active'));
+                            this.classList.add('active');
+                            
+                            const newUrl = new URL(window.location);
+                            newUrl.searchParams.set('category', category);
+                            window.history.pushState({}, '', newUrl);
+                        })
+                        .catch(error => {
+                            console.error('Ошибка:', error);
+                        habitsList.innerHTML = '<div class="error">Ошибка загрузки</div>';
+                    });
+                });
+            });
+            
+            statusFilters.forEach(filter => {
+                if (filter.dataset.status === currentStatus) {
+                    filter.classList.add('active');
+                }
+                
+                filter.addEventListener('click', function() {
+                    const status = this.dataset.status;
+                    const activeCategory = document.querySelector('.category-filter.active').dataset.category;
+                    const habitsList = document.querySelector('.habits-list');
+                    habitsList.innerHTML = '<div class="loading">Загрузка...</div>';
+                    
+                    const url = `/habits/habits_list/?category=${activeCategory}&status=${status}&ajax=true`;
+                    
+                    fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        updateHabitsList(data.habits);
+                        statusFilters.forEach(f => f.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        const newUrl = new URL(window.location);
+                        newUrl.searchParams.set('status', status);
+                        window.history.pushState({}, '', newUrl);
+                    })
+                    .catch(error => {
+                        console.error('Ошибка:', error);
+                        habitsList.innerHTML = '<div class="error">Ошибка загрузки</div>';
+                    });
+                });
+            });
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const durationBtns = document.querySelectorAll('.duration-btn');
+            const durationInput = document.getElementById('duration');
+            const durationUnit = document.getElementById('durationUnit');
+            
+            durationBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const unit = this.dataset.unit;
+                    
+                    durationBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    durationUnit.value = unit;
+                    
+                    if (unit === 'hours') {
+                        durationInput.max = 24;
+                        if (durationInput.value > 24) durationInput.value = 24;
+                    } else {
+                    durationInput.max = 240;
+                }
+            });
+        });
+    });
+    
+    closeModal.addEventListener('click', function() {
+        modalOverlay.style.display = 'none';
+        document.body.style.overflow = '';
+    });
+    
+    
+    modalOverlay.addEventListener('click', function(e) {
+        if (e.target === modalOverlay) {
+            modalOverlay.style.display = 'none';
+            document.body.style.overflow = '';
+        };
+    });
+    
+    
+    const modalOverlayHabit = document.getElementById('modalOverlayHabit');
+    const openInfoHabit = document.getElementById('openInfoHabit');
+    const closeInfoHabit = document.getElementById('closeInfoHabit');
+    
+    
+    openInfoHabit.addEventListener('click', function() {
+        modalOverlayHabit.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    })
+    
+    closeInfoHabit.addEventListener('click', function() {
+        modalOverlayHabit.style.display = 'none';
+        document.body.style.overflow = '';
+    });
+    
+    modalOverlayHabit.addEventListener('click', function(e) {
+        if (e.target === modalOverlayHabit) {
+            modalOverlayHabit.style.display = 'none';
+            document.body.style.overflow = '';
+        };
+    });
+    
+    
+    const successPopup = document.getElementById('successPopup');
+    const closePopup = document.getElementById('closePopup');
+    
+    
+    closePopup.addEventListener('click', function() {
+        successPopup.classList.remove('show');
+    });
+    
+    successPopup.addEventListener('click', function(e) {
+        if (e.target === successPopup) {
+            successPopup.classList.remove('show');
+        }
+    });
+    
+</script>

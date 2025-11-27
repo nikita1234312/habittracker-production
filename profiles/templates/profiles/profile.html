@@ -1,0 +1,124 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HabitTracker - Профиль</title>
+
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+    <script src="{% static 'js/profile.js' %}"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{% url 'main' %}" class="logo">HabitTracker</a>
+        <ul class="nav-links">
+            <li><a href="{% url 'main' %}">Главная</a></li>
+            <li><a href="{% url 'habits_list' %}">Привычки</a></li>
+            <li><a href="#">Достижения</a></li>
+            <li><a href="#">О нас</a></li>
+            {% if user.is_authenticated %}
+                <li class="profile-item">
+                    <a href="{% url 'profile' %}" class="profile-link">
+                        {% if profile.avatar %} 
+                            <img src="{{ profile.avatar.url }}" alt="" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
+                        {% else %}
+                            <div class="profile-avatar">{{ user.username|first }}</div>
+                        {% endif %}
+                        <span class="profile-text">Профиль</span>
+                    </a>
+                </li>
+            {% else %}
+                <li><a href="{% url 'signin' %}">Войти</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="profile-header {% if profile.cover_image %}has-custom-cover{% endif %}" 
+             {% if profile.cover_image %}style="background-image: url('{{ profile.cover_image.url }}')"{% endif %}>
+        </div>
+        
+        <div class="block-profile-information">
+            <div class="profile-avatar">
+                {% if profile.avatar %}
+                    <img src="{{ profile.avatar.url }}" alt="Аватар" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                {% else %}
+                    {{ user.username|first }}
+                {% endif %}
+            </div>
+            <div class="profile-username"><h1>{{ user.username }}</h1></div>
+            <div class="profile-information-city-country">г. {{ profile.city }}</div>
+            <button class="open-modal-btn" onclick="openModal()">Редактировать профиль</button>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="container">
+                <form method="post" action="{% url 'profile_edit' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h1>Редактировать профиль</h1>
+                        <div class="modal-profile-header">
+                            <div class="cover-container {% if profile.cover_image %}has-custom-cover{% endif %}" id="modal-cover" 
+                                 {% if profile.cover_image %}style="background-image: url('{{ profile.cover_image.url }}')"{% endif %}>
+                            </div>
+                            
+                            <div class="modal-profile-avatar" onclick="document.getElementById('avaInput').click()">
+                                {% if profile.avatar %}
+                                    <img src="{{ profile.avatar.url }}" alt="Аватар" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                                {% else %}
+                                    <div class="avatar-letter">{{user.username|first}}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <input type="file" name="avatar" id="avaInput" class="file-input" accept="image/*" onchange="showAva()">
+                            <label for="coverInput" class="styled-file-button">
+                                {% if profile.cover_image %}Сменить обложку{% else %}Выбрать обложку{% endif %}
+                            </label>
+                            <input type="file" 
+                                   id="coverInput" 
+                                   name="cover_image" 
+                                   class="file-input" 
+                                   accept="image/*"
+                                   onchange="showCover()">
+                        </div>
+                    </div>
+    
+                    <div class="modal-body">
+                        <div class="block-profile-information">
+                            <div class="form-group">
+                                <input type="text" 
+                                    name="city" 
+                                    class="form-control" 
+                                    id="id_city"
+                                    placeholder="Введите ваш город"
+                                    value="{{ profile.city }}"
+                                    style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="modal-footer">
+                        <button type="button" class="btn-secondary" onclick="closeModal()">Закрыть</button>
+                        <button type="submit" class="btn-primary">Сохранить</button>
+                    </div>  
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <div class="logout">
+                <button type="submit" class="logout-btn">Выйти</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+    
+

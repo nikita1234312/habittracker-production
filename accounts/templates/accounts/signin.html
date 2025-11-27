@@ -1,0 +1,47 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход</title>
+    <link rel="stylesheet" href="{% static 'css/signin.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>HabitTracker</h1>
+            <p>С возвращением!</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" name="username" style="display:none" autocomplete="username">
+            <input type="password" name="password" style="display:none" autocomplete="current-password">
+
+
+            <div class="form-group">
+                <label for="id_username">Имя пользователя</label>
+                {{ form.username }}
+                {{ form.username.errors  }}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_password">Пароль</label>
+                {{ form.password }}
+                {{ form.password.errors  }}
+
+            <button type="submit" class="btn">Войти</button>
+        </form>
+
+
+
+        <div class="divider"></div>
+
+        <div class="register-link">
+            Нет аккаунта? <a href="{% url 'signup' %}">Зарегистрироваться</a>
+        </div>
+    </div>
+</body>
+</html>

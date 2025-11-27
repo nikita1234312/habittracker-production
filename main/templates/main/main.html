@@ -1,0 +1,188 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HabitTracker - Формируйте привычки</title>
+
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{% url 'main' %}" class="logo">HabitTracker</a>
+        <ul class="nav-links">
+            <li><a href="{% url 'main' %}">Главная</a></li>
+            <li><a href="{% url 'habits_list' %}">Привычки</a></li>
+            <li><a href="#">Достижения</a></li>
+            <li><a href="#">О нас</a></li>
+            {% if user.is_authenticated %}
+                <li class="profile-item">
+                    <a href="{% url 'profile' %}" class="profile-link">
+                        {% if profile.avatar %} 
+                            <img src="{{ profile.avatar.url }}" alt="" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
+                        {% else %}
+                            <div class="profile-avatar">{{ user.username|first }}</div>
+                        {% endif %}
+                        <span class="profile-text">Профиль</span>
+                    </a>
+                </li>
+            {% else %}
+                <li><a href="{% url 'signin' %}">Войти</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="tagline">Формируйте привычки, которые меняют жизнь</h1>
+            <p class="description">
+                Ваш персональный помощник в создании устойчивых привычек 
+                через геймификацию и визуализацию прогресса
+            </p>
+            <a href="#" class="cta-button">Начать бесплатно</a>
+        </div>
+    </section>
+    
+    <section class="steps-section">
+        <h2 class="section-title">КАК ЭТО РАБОТАЕТ</h2>
+        
+        <div class="steps-container">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3 class="step-title">ВЫБЕРИТЕ ПРИВЫЧКУ</h3>
+                    <p class="step-description">
+                        Создайте свою цель или выберите из готовых шаблонов: спорт, учеба, здоровье, продуктивность.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3 class="step-title">ОТСЛЕЖИВАЙТЕ ПРОГРЕСС</h3>
+                    <p class="step-description">
+                        Отмечайте выполнение каждый день. Следите за вашей серией и статистикой в простом и понятном интерфейсе.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3 class="step-title">ПОЛУЧАЙТЕ НАГРАДЫ</h3>
+                    <p class="step-description">
+                        Зарабатывайте баллы, открывайте достижения и соревнуйтесь с друзьями в геймифицированной системе.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3 class="step-title">ДОСТИГАЙТЕ РЕЗУЛЬТАТОВ</h3>
+                    <p class="step-description">
+                        Формируйте устойчивые привычки за 21 день и меняйте свою жизнь к лучшему с помощью персональной статистики.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="stats-section">
+        <div class="stats-container">
+            <div class="stats-header">
+                <h2 class="stats-title">НАЧНИТЕ МЕНЯТЬСЯ УЖЕ СЕГОДНЯ</h2>
+                <p class="stats-subtitle">
+                    Простой и эффективный способ формирования привычек, 
+                    который уже помог сотням людей изменить свою жизнь.
+                </p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Пользователей</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-number">21</div>
+                    <div class="stat-label">День для привычки</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-number">94%</div>
+                    <div class="stat-label">Довольных отзывов</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="testimonials-section">
+        <div class="testimonials-container">
+            <h2 class="testimonials-title">ОТЗЫВЫ НАШИХ ПОЛЬЗОВАТЕЛЕЙ</h2>
+            <p class="testimonials-subtitle">
+                Реальные истории людей, которые изменили свою жизнь с помощью HabitTracker
+            </p>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        "За 21 день сформировал привычку утренней зарядки. Приложение мотивирует не пропускать дни - видишь свой прогресс и не хочешь сбивать серию!"
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">А</div>
+                        <div class="author-info">
+                            <div class="author-name">Алексей</div>
+                            <div class="author-details">использует 3 месяца</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        "Никогда не думала, что смогу читать каждый день. Благодаря трекеру привычек читаю уже 45 дней подряд! Геймификация действительно работает."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">М</div>
+                        <div class="author-info">
+                            <div class="author-name">Мария</div>
+                            <div class="author-details">использует 2 месяца</div>
+                        </div>    
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        "Как разработчик, ценю простой и понятный интерфейс. Отслеживаю 5 привычек одновременно, и это не вызывает сложностей. Рекомендую всем!"
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">Д</div>
+                        <div class="author-info">
+                            <div class="author-name">Дмитрий</div>
+                            <div class="author-details">использует 4 месяца</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+        <section class="final-cta">
+        <div class="final-cta-container">
+            <h2 class="final-cta-title">НАЧНИТЕ МЕНЯТЬСЯ УЖЕ СЕГОДНЯ</h2>
+            <p class="final-cta-subtitle">
+                Присоединяйтесь к 500+ пользователям, которые уже формируют привычки с HabitTracker
+            </p>
+            <a href="#" class="cta-button large">Начать бесплатно</a>
+        </div>
+    </section>
+    <footer class="footer-simple">
+        <div class="footer-simple-content">
+            <div class="footer-brand">
+                <div class="footer-logo">HabitTracker</div>
+                <div class="footer-tagline">Формируйте привычки, которые меняют жизнь</div>
+            </div>
+            <div class="footer-copyright">© 2025 HabitTracker. Все права защищены.</div>
+        </div>
+    </footer>
+</body>
+</html>

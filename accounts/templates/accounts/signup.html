@@ -1,0 +1,60 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+    <title>Регистрация</title>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>HabitTracker</h1>
+            <p>Создайте свой аккаунт</p>
+        </div>
+
+        <form method="post" autocomplete="off">
+            {% csrf_token %}
+            <!-- {{ form.as_p }} -->
+
+            <input type="text" name="username" style="display:none" autocomplete="username">
+            <input type="password" name="password" style="display:none" autocomplete="current-password">
+
+
+            <div class="form-group">
+                <label for="id_username">Имя пользователя</label>
+                {{ form.username }}
+                {{ form.username.errors  }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_email">Email</label>
+                {{ form.email }}
+                {{ form.email.errors }}
+            </div>
+        
+            <div class="form-group">
+                <label for="id_password1">Пароль</label>
+                {{ form.password1 }}
+                {{ form.password1.errors  }}
+            </div>
+        
+            <div class="form-group">
+                <label for="id_password2">Повторите пароль</label>
+                {{ form.password2 }}
+                {{ form.password2.errors }}
+            </div>
+        
+            <button type="submit" class="btn">Зарегистрироваться</button>
+        </form>
+
+        <div class="divider"></div> 
+
+        <div class="login-link">
+            Уже есть аккаунт? <a href="{% url 'signin' %}">Войти</a>
+        </div>
+    </div>
+</body>
+</html>

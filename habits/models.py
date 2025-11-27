@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
-from datetime import time
+from datetime import time, date, datetime
 
 
 class HabitModel(models.Model):
@@ -14,9 +14,7 @@ class HabitModel(models.Model):
     CATEGORY_CHOICES = [
         ('health', 'Здоровье'),
         ('sport', 'Спорт'),
-        ('learning', 'Обучение'),
-        ('productivity', 'Продуктивность'),
-        ('finance', 'Финансы'),
+        ('learning', 'Образование'),
         ('relationships', 'Отношения'),
         ('other', 'Другое'),
     ]
@@ -65,13 +63,18 @@ class HabitModel(models.Model):
     # Длительность выполнения привычки
     duration_minutes = models.PositiveIntegerField(
         default=15,
-        validators=[MinValueValidator(1), MaxValueValidator(240)], # Максимум до 4 часов
+        validators=[MinValueValidator(1), MaxValueValidator(240)], # до 4 часов
         verbose_name='Длительность (минуты)',
     )
 
     is_active = models.BooleanField(default=True, verbose_name='Активна')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
+    current_streak = models.PositiveIntegerField(default=0, verbose_name='Текущая серия')
+    total_completions = models.PositiveIntegerField(default=0, verbose_name='Всего выполнений')
+    total_time_minutes = models.PositiveIntegerField(default=0, verbose_name='Общее время (минуты)')
+    success_rate = models.FloatField(default=0, validators=[MinValueValidator(0.0), MaxValueValidator(100.0)], verbose_name='Процент успеха')
+    last_completed = models.DateField(null=True, blank=True, verbose_name='Последнее выполнение')
 
     @property
     def duration_display(self):
@@ -95,6 +98,82 @@ class HabitModel(models.Model):
         else:
             return f'{minutes} {get_minutes_text(minutes)}'
         
+    @property
+    def is_completed_today(self):
+        """Проверяет, выполнена ли привычка сегодня"""
+        if not self.last_completed:
+            return False
+        return self.last_completed == date.today()
+
+    @property
+    def days_since_creation(self):
+        """Количество дней с момента создания привычки"""
+        return (date.today() - self.created_at.date()).days
+    
+
+    @property
+    def total_time_display(self):
+        """Отображение общего времени в читаемом формате"""
+        hours = self.total_time_minutes // 60
+        minutes = self.total_time_minutes % 60
+        
+        if hours > 0 and minutes > 0:
+            return f'{hours}ч {minutes}м'
+        elif hours > 0:
+            return f'{hours}ч'
+        else:
+            return f'{minutes}м'
+        
+    @property
+    def get_active_days_display(self):
+        """Отображение активных дней в читаемом формате"""
+        day_names = {
+            'mon': 'Пн', 'tue': 'Вт', 'wed': 'Ср', 
+            'thu': 'Чт', 'fri': 'Пт', 'sat': 'Сб', 'sun': 'Вс'
+        }
+        return [day_names[day] for day in self.days_of_week]
+    
+    def mark_completed(self):
+        """Отметить привычку как выполненную на сегодня"""
+        today = date.today()
+
+        if self.last_completed == today:
+            return False
+        
+        self.total_completions += 1
+        self.total_time_minutes += self.duration_minutes
+
+        if self.last_completed and (today - self.last_completed).days == 1:
+            self.current_streak += 1
+        else:
+            self.current_streak = 1
+
+        if self.current_streak > self.best_streak:
+            self.best_streak = self.current_streak
+        self.last_completed = today
+
+        if self.days_since_creation > 0:
+            self.success_rate = (self.total_completions / self.days_since_creation) * 100
+        
+        self.save()
+        return True
+    
+    def reset_streak(self):
+        """Сбросить текущую серию (при пропуске)"""
+        self.current_streak = 0
+        self.save()
+    
+    def get_stats_for_display(self):
+        """Получить статистику для отображения в модальном окне"""
+        return {
+            'current_streak': self.current_streak,
+            'best_streak': self.best_streak,
+            'total_completions': self.total_completions,
+            'total_time': self.total_time_display,
+            'success_rate': round(self.success_rate, 1),
+            'is_completed_today': self.is_completed_today,
+        }
+
     def __str__(self):
         return f"{self.title} ({self.get_habit_type_display()})"
 
@@ -102,4 +181,4 @@ class HabitModel(models.Model):
     class Meta:
         verbose_name = 'Привычка'
         verbose_name_plural = 'Привычки'
-        ordering = ['created_at']  # Сортировка по дате создания
+        ordering = ['created_at']

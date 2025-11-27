@@ -1,0 +1,150 @@
+:root {
+            --primary: #3B82F6;
+            --primary-hover: #2563EB;
+            --secondary: #243550;
+            --accent: #60A5FA;
+            --background: #f8f8f8;   /* Темный фон вместо белого */
+            --surface: #FFFFFF;
+            --surface-dark: #F1F5F9;
+            --text: #FFFFFF;        /* Белый текст на темном */
+            --text-light: #2b3544;  /* Светло-серый для второстепенного */
+            --text-on-dark: #FFFFFF;
+            --border: #334155;
+            --border-light: #475569;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-light);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--secondary);  /* Остается темным для контраста на белой карточке */
+            margin-bottom: 8px;
+        }
+
+        .logo p {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    background: var(--surface-dark);
+    color: #1E293B;  /* ← ТЕМНО-СИНИЙ ТЕКСТ */
+    transition: all 0.2s ease;
+}
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--surface);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+input::placeholder {
+    color: var(--text-light);  /* Серый для подсказок */
+}
+
+
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--secondary);  /* Темно-синяя кнопка вместо ярко-синей */
+            color: var(--text-on-dark);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #0F172A;  /* Еще темнее при наведении */
+            transform: translateY(-1px);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .login-link a {
+            color: var(--secondary);  /* Темно-синяя ссылка */
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 24px 0;
+        }
+
+.errorlist {
+    color: #dc3545;
+    font-size: 14px;
+    margin: 5px 0 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.errorlist li {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    padding: 8px;
+    margin-top: 5px;
+}
+
+/* Подсветка полей с ошибками */
+.input-error {
+    border-color: #dc3545 !important;
+}

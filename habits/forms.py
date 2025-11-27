@@ -10,6 +10,11 @@ class HabitForm(forms.ModelForm):
         required=True
     )
 
+    reminder_time = forms.TimeField(
+        widget=forms.TimeInput(attrs={'type': 'time'}),
+        label='Время выполнения'
+    )
+
     class Meta:
         model = HabitModel
         fields = ['title', 'description', 'habit_type', 'category', 'reminder_time', 'duration_minutes', 'days_of_week']

@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import add_habit, habits_list
+from . import views
 
 urlpatterns = [
-    path('habits_add/', add_habit, name='habits_add'),
-    path('habits_list/', habits_list, name='habits_list')
+    path('add/', views.add_habit, name='add_habit'),
+    path('habits_list/', views.habits_list, name='habits_list'),
+    path('<int:habit_id>/', views.habit_detail, name='habit_detail'),
 ]
