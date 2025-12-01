@@ -10,8 +10,16 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 SECRET_KEY = 'django-insecure-jcyoqwgt+tg*acg&n(n3l=pmevys(2w5dk%zw&q!7nfoi9gk!w'
-DEBUG = True
-ALLOWED_HOSTS = []
+
+# ⚠️ ИЗМЕНЕНИЕ: Для PythonAnywhere DEBUG должен быть False
+DEBUG = True  # Измените на False для продакшена!
+
+# ⚠️ ИЗМЕНЕНИЕ: Добавьте ваш хост PythonAnywhere
+ALLOWED_HOSTS = [
+    'HabitTracker07.pythonanywhere.com',  # Замените yourusername на ваш логин
+    'localhost',
+    '127.0.0.1',
+]
 
 # Application definition
 INSTALLED_APPS = [
@@ -87,13 +95,14 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Internationalization
-LANGUAGE_CODE = 'ru-ru'  # поменял на русский
+LANGUAGE_CODE = 'ru-ru'
 TIME_ZONE = 'Europe/Moscow'
 USE_I18N = True
 USE_TZ = True
 
-# Static files
-STATIC_URL = 'static/'
+# ⚠️ ИЗМЕНЕНИЕ: Статические файлы для PythonAnywhere
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Для collectstatic
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
