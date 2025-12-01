@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import HabitModel
 
 class HabitAdmin(admin.ModelAdmin):
-    list_display = ['title', 'user', 'habit_type', 'category', 'reminder_time', 'duration_display', 'is_active', 'created_at', 'days_of_week']
+    list_display = ['title', 'user', 'habit_type', 'category', 'reminder_time', 'duration_display', 'is_active', 'created_at', 'days_of_week', 'last_completed']
     list_filter = ['is_active', 'created_at', 'category', 'habit_type']
     search_fields = ['title', 'description', 'user__username']
     list_editable = ['is_active']

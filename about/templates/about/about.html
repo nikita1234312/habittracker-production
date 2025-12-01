@@ -1,0 +1,86 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HabitTracker - О нас</title>
+    <link rel="icon" type="image/png" href="{% static 'img/иконка.png' %}">
+    <link rel="stylesheet" href="{% static 'css/about.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{% url 'main' %}" class="logo">HabitTracker</a>
+        <ul class="nav-links">
+            <li><a href="{% url 'main' %}">Главная</a></li>
+            <li><a href="{% url 'habits_list' %}">Привычки</a></li>
+            <li><a href="{% url 'achievements' %}">Достижения</a></li>
+            <li><a href="{% url 'about' %}">О нас</a></li>
+            {% if user.is_authenticated %}
+                <li class="profile-item">
+                    <a href="{% url 'profile' %}" class="profile-link">
+                        {% if profile.avatar %} 
+                            <img src="{{ profile.avatar.url }}" alt="" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
+                        {% else %}
+                            <div class="profile-avatar-link">{{ user.username|first }}</div>
+                        {% endif %}
+                        <span class="profile-text">Профиль</span>
+                    </a>
+                </li>
+            {% else %}
+                <li><a href="{% url 'signin' %}">Войти</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="about-header">
+            <h1>О проекте HabitTracker</h1>
+            <p class="subtitle">Ваш помощник в формировании полезных привычек</p>
+        </div>
+
+        <div class="about-content">
+            <div class="about-section">
+                <div class="project-info">
+                    <p>Этот проект разработан для курса <strong>"Веб-разработка на Python"</strong> от <strong>Академия Топ</strong> для получения диплома об успешном окончании</p>
+                    <p>HabitTracker - это веб-приложение для отслеживания привычек, которое помогает пользователям формировать полезные рутины и избавляться от вредных привычек.</p>
+                </div>
+            </div>
+
+            <div class="about-section">
+                <h2>Разработчик</h2>
+                <div class="dev-info">
+                    <div class="developer-info">
+                        <h3>Никита</h3>
+                        <span class="role">Python-разработчик</span>
+                        <p>Студент курса "Веб-разработка на Python" в Академия Топ</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="about-section">
+                <h2>Связь со мной</h2>
+                <div class="social-links">
+                    <a href="https://web.telegram.org/a/#6058083243" class="social-link" target="_blank">
+                        <img src="{% static 'img/telegram.png' %}" alt="Telegram">
+                        <span>Телеграм</span>
+                    </a>
+                    <a href="https://vk.com/nekit1gg1" class="social-link" target="_blank">
+                        <img src="{% static 'img/vk.png' %}" alt="VK">
+                        <span>ВК</span>
+                    </a>
+                    <a href="https://www.instagram.com/proko_penkonikita?igsh=MW44MmQ3emhkNmpsbw%3D%3D&utm_source=qr" class="social-link" target="_blank">
+                        <img src="{% static 'img/instagram_5968776.png' %}" alt="Instagram">
+                        <span>Инстаграм</span>
+                    </a>
+                    <a href="https://github.com/nikita1234312" class="social-link" target="_blank">
+                        <img src="{% static 'img/github.png' %}" alt="GitHub">
+                        <span>Гитхаб</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

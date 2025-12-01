@@ -25,6 +25,8 @@ INSTALLED_APPS = [
     'accounts',
     'main', 
     'profiles',
+    'achievements',
+    'about', 
     'telegram_bot'
 ]
 

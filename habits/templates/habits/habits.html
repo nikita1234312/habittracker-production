@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HabitTracker - Привычки</title>
 
+    <link rel="icon" type="image/png" href="{% static 'img/иконка.png' %}">
+
     <link rel="stylesheet" href="{% static 'css/habits.css' %}">
 </head>
 <body>
@@ -15,15 +17,15 @@
         <ul class="nav-links">
             <li><a href="{% url 'main' %}">Главная</a></li>
             <li><a href="{% url 'habits_list' %}">Привычки</a></li>
-            <li><a href="#">Достижения</a></li>
-            <li><a href="#">О нас</a></li>
+            <li><a href="{% url 'achievements' %}">Достижения</a></li>
+            <li><a href="{% url 'about' %}">О нас</a></li>
             {% if user.is_authenticated %}
                 <li class="profile-item">
                     <a href="{% url 'profile' %}" class="profile-link">
                         {% if profile.avatar %} 
                             <img src="{{ profile.avatar.url }}" alt="" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
                         {% else %}
-                            <div class="profile-avatar">{{ user.username|first }}</div>
+                            <div class="profile-avatar-link">{{ user.username|first }}</div>
                         {% endif %}
                         <span class="profile-text">Профиль</span>
                     </a>
@@ -83,10 +85,10 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-icon lucide-check"><path d="M20 6 9 17l-5-5"/></svg>
                         Выполненные
                     </li>
-                    <li class="status-filter" data-status="active">
+                    <!-- <li class="status-filter" data-status="active">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap-icon lucide-zap"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
                         Активные
-                    </li>
+                    </li> -->
                 </ul>
             </nav>
             <button type="button" class="btn" id="openModalAddHabit">
@@ -148,9 +150,7 @@
                                 <select id="category" class="category" name="category" required>
                                     <option value="health">Здоровье</option>
                                     <option value="sport">Спорт</option>
-                                    <option value="learning">Обучение</option>
-                                    <option value="productivity">Продуктивность</option>
-                                    <option value="finance">Финансы</option>
+                                    <option value="learning">Образование</option>
                                     <option value="relationships">Отношения</option>
                                     <option value="other" selected>Другое</option>
                                 </select>
@@ -198,7 +198,6 @@
                                     <input type="number" id="duration" name="duration_minutes" min="1" max="240" value="15" required>
                                     <div class="duration-toggle">
                                         <button type="button" class="duration-btn active" data-unit="minutes">мин</button>
-                                        <button type="button" class="duration-btn" data-unit="hours">час</button>
                                     </div>
                                 </div>
                                 <input type="hidden" id="durationUnit" name="duration_unit" value="minutes">
@@ -253,40 +252,25 @@
                         <span class="info-label">Длительность:</span>
                         <span class="info-value" id="habitDuration"></span>
                     </div>
-                    <div class="habit-statistics-section">
-                        <h2>Статистика</h2>
-                        <div class="statistics-cards">
-                            <div class="statistics-card">
-                                <span class="stat-number">15</span>
-                                <span class="stat-label">Всего выполнений</span>
-                            </div>
-                            
-                            <div class="statistics-card">
-                                <span class="stat-number">85%</span>
-                                <span class="stat-label">Успешных дней</span>
-                            </div>
-                            
-                            <div class="statistics-card">
-                                <span class="stat-number">7.5</span>
-                                <span class="stat-label">Часов всего</span>
-                            </div>
-                        </div>
-                    </div>
+                
                     <div class="habit-actions">
-                        <button class="btn-mark-complete" id="markComplete">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M20 6 9 17l-5-5"/>
-                            </svg>
-                            Выполнить
-                        </button>
-                        <button class="btn-edit">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-pen-icon lucide-clipboard-pen"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5.5"/><path d="M4 13.5V6a2 2 0 0 1 2-2h2"/><path d="M13.378 15.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></svg>
-                            Редактировать
-                        </button>
-                        <button class="btn-delete">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                            Удалить
-                        </button>
+                        <form method="post" id="completedForm">
+                            {% csrf_token %}
+                            <button class="btn-mark-complete" id="markComplated">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 6 9 17l-5-5"/>
+                                </svg>
+                                Выполнить
+                            </button>
+                        </form>
+
+                        <form method="post" id="deleteForm">
+                            {% csrf_token %}
+                            <button class="btn-delete" id="deleteBtn" type="submit">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                Удалить
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -318,14 +302,34 @@
     function getCSRFToken() {
         return document.querySelector('[name=csrfmiddlewaretoken]').value;
     }
+
+    function openEditModal() {
+        const modalOverlayHabit = document.getElementById('modalOverlayHabit');
+        modalOverlayHabit.style.display = 'none';
+        
+        const modalOverlay = document.getElementById('modalOverlay');
+        modalOverlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
     
     function openHabitModal(habitId) {
         fetch(`/habits/${habitId}/`)
         .then(response => response.json())
         .then(data => {
+
+            const categoryChoise = {
+                'health': 'Здоровье',
+                'sport': 'Спорт',
+                'learning': 'Образование',
+                'relationships': 'Отношения',
+                'other': 'Другое',
+            };
+            
+            document.getElementById('deleteForm').action = `/habits/${habitId}/delete/`;
+
             document.getElementById('habitTitle').textContent = data.title;
             document.getElementById('habitDescription').textContent = data.description;
-            document.getElementById('habitCategory').textContent = data.category;
+            document.getElementById('habitCategory').textContent = categoryChoise[data.category];
             
             const typeElement = document.getElementById('habitType');
             typeElement.textContent = data.habit_type === 'useful' ? 'Полезная' : 'Вредная';
@@ -337,7 +341,36 @@
             
             document.querySelector('.info-item:nth-child(6) .info-value').textContent = `${data.duration_minutes || 15} минут`;
             
+
+           
+            const markCompleteBtn = document.getElementById('markComplated');
+            const completeForm = document.getElementById('completedForm');
+
+            if (data.is_completed_today) {
+                markCompleteBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 6 9 17l-5-5"/>
+                </svg>
+                Выполнено
+                `;
+
+                markCompleteBtn.disabled = true;
+                markCompleteBtn.classList.add('complete');
+            } else {
+                markCompleteBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 6 9 17l-5-5"/>
+                </svg>
+                Выполнить
+                `;
+
+                markCompleteBtn.disabled = false;
+                markCompleteBtn.classList.remove('complete');
+
+                completeForm.action = `/habits/${habitId}/complete/`;
+            }
             
+
             const modalOverlayHabit = document.getElementById('modalOverlayHabit');
                 modalOverlayHabit.style.display = 'flex';
                 document.body.style.overflow = 'hidden';

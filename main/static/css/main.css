@@ -601,9 +601,9 @@ body {
     background: #f8f9fa;
 }
 
-.profile-avatar {
-    width: 28px;
-    height: 28px;
+.profile-avatar-link {
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     background: #000000;
     color: white;

@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HabitTracker - Профиль</title>
 
+    <link rel="icon" type="image/png" href="{% static 'img/иконка.png' %}">
+
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">
     <script src="{% static 'js/profile.js' %}"></script>
 </head>
@@ -16,15 +18,18 @@
         <ul class="nav-links">
             <li><a href="{% url 'main' %}">Главная</a></li>
             <li><a href="{% url 'habits_list' %}">Привычки</a></li>
-            <li><a href="#">Достижения</a></li>
-            <li><a href="#">О нас</a></li>
+            <li><a href="{% url 'achievements' %}">Достижения</a></li>
+            <li><a href="{% url 'about' %}">О нас</a></li>
             {% if user.is_authenticated %}
                 <li class="profile-item">
                     <a href="{% url 'profile' %}" class="profile-link">
                         {% if profile.avatar %} 
-                            <img src="{{ profile.avatar.url }}" alt="" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
+                            <img src="{{ profile.avatar.url }}" alt="" 
+                                style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; display: block;">
                         {% else %}
-                            <div class="profile-avatar">{{ user.username|first }}</div>
+                            <div class="profile-avatar-link" style="width: 30px; height: 30px; border-radius: 50%; background: #000; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                                {{ user.username|first }}
+                            </div>
                         {% endif %}
                         <span class="profile-text">Профиль</span>
                     </a>
@@ -49,8 +54,22 @@
                 {% endif %}
             </div>
             <div class="profile-username"><h1>{{ user.username }}</h1></div>
-            <div class="profile-information-city-country">г. {{ profile.city }}</div>
+            <div class="profile-information-city-country"> г. {{ profile.city|default:"Не указан"}}</div>
             <button class="open-modal-btn" onclick="openModal()">Редактировать профиль</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="settings-content">
+            <h2>Настройки</h2>
+            <div class="settings-cards">
+                <a href="https://t.me/habittracker_top_bot" class="settings-card" target="_blank">
+                    <div class="settings-card-header">
+                        <h3>Напоминания о привычках</h3>
+                    </div>
+                    <p>Подключите телеграмм бота чтобы не забывать выполнять привычки</p>
+                </a>
+            </div>
         </div>
     </div>
     
@@ -109,14 +128,13 @@
             </div>
         </div>
     </div>
-    
+
     <div class="container">
-        <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <div class="logout">
-                <button type="submit" class="logout-btn">Выйти</button>
-            </div>
-        </form>
+        <div class="logout-block">
+            <a href="{% url 'logout' %}" class="logout">
+                Выйти
+            </a>
+        </div>
     </div>
 </body>
 </html>

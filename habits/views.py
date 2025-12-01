@@ -4,6 +4,8 @@ from django.http import JsonResponse
 from .models import HabitModel
 from profiles.models import ProfileModel
 from .forms import HabitForm
+from django.utils import timezone
+from datetime import timedelta, date
 
 
 @login_required
@@ -19,9 +21,7 @@ def habit_detail(request, habit_id):
         'days_of_week': habit.days_of_week,
         'reminder_time': habit.reminder_time.strftime('%H:%M'),
         'duration_minutes': habit.duration_minutes,
-        'total_completions': habit.total_completions,
-        'success_rate': round(habit.success_rate, 1),
-        'total_time_hours': habit.total_time_display
+        'is_completed_today': habit.is_completed_today
     }
 
     return JsonResponse(data)
@@ -85,8 +85,10 @@ def get_category_icon(category_code):
     }
     return icons.get(category_code, icons['other'])
 
-@login_required
 def habits_list(request):
+    if not request.user.is_authenticated:
+        return redirect('signin')
+
     selected_category = request.GET.get('category', 'all')
     selected_status = request.GET.get('status', 'all')
     is_ajax = request.GET.get('ajax') == 'true'
@@ -97,10 +99,11 @@ def habits_list(request):
         habits = habits.filter(category=selected_category)
     
     if selected_status != 'all':
-        if selected_status == 'active':
-            habits = habits.filter(is_active=True)
-        elif selected_status == 'completed':
-            habits = habits.filter(is_active=False)
+        # if selected_status == 'active':
+        #     habits = habits.filter(is_active=True)
+        if selected_status == 'completed':
+            time_24_hours_ago = timezone.now() - timedelta(hours=24)
+            habits = habits.filter(last_completed=date.today())
 
     if is_ajax:
         habits_data = []
@@ -122,7 +125,7 @@ def habits_list(request):
         })
 
     total_habits = habits.count()
-    active_habits = habits.filter(is_active=True).count()
+    # active_habits = habits.filter(is_active=True).count()
 
     category_name = 'Все'
     if selected_category != 'all':
@@ -136,7 +139,7 @@ def habits_list(request):
     context = {
         'habits': habits,
         'total_habits': total_habits,
-        'active_habits': active_habits,
+        # 'active_habits': active_habits,
         'current_category': selected_category, 
         'category_name': category_name,         
         'categories': HabitModel.CATEGORY_CHOICES,
@@ -144,3 +147,21 @@ def habits_list(request):
         
     }
     return render(request, 'habits/habits.html', context)
+
+@login_required
+def complete_habit(request, habit_id):
+    habit = get_object_or_404(HabitModel, id=habit_id, user=request.user)
+
+    if habit.is_completed_today:
+        pass
+    else:
+        habit.mark_completed()  
+
+    return redirect('habits_list')
+
+@login_required
+def delete_habit(request, habit_id):
+    habit = get_object_or_404(HabitModel, id=habit_id, user=request.user)
+    habit.delete()
+
+    return redirect('habits_list')

@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HabitTracker - Формируйте привычки</title>
 
+    <link rel="icon" type="image/png" href="{% static 'img/иконка.png' %}">
+
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
 </head>
 <body>
@@ -14,15 +16,15 @@
         <ul class="nav-links">
             <li><a href="{% url 'main' %}">Главная</a></li>
             <li><a href="{% url 'habits_list' %}">Привычки</a></li>
-            <li><a href="#">Достижения</a></li>
-            <li><a href="#">О нас</a></li>
+            <li><a href="{% url 'achievements' %}">Достижения</a></li>
+            <li><a href="{% url 'about' %}">О нас</a></li>
             {% if user.is_authenticated %}
                 <li class="profile-item">
                     <a href="{% url 'profile' %}" class="profile-link">
                         {% if profile.avatar %} 
                             <img src="{{ profile.avatar.url }}" alt="" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
                         {% else %}
-                            <div class="profile-avatar">{{ user.username|first }}</div>
+                            <div class="profile-avatar-link">{{ user.username|first }}</div>
                         {% endif %}
                         <span class="profile-text">Профиль</span>
                     </a>
@@ -40,7 +42,12 @@
                 Ваш персональный помощник в создании устойчивых привычек 
                 через геймификацию и визуализацию прогресса
             </p>
-            <a href="#" class="cta-button">Начать бесплатно</a>
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'habits_list' %}" class="cta-button">Продолжить</a>
+            {% else %}
+                <a href="{% url 'signin' %}" class="cta-button">Начать бесплатно</a>
+            {% endif %}
         </div>
     </section>
     
@@ -166,13 +173,18 @@
             </div>
         </div>
     </section>
-        <section class="final-cta">
+    <section class="final-cta">
         <div class="final-cta-container">
             <h2 class="final-cta-title">НАЧНИТЕ МЕНЯТЬСЯ УЖЕ СЕГОДНЯ</h2>
             <p class="final-cta-subtitle">
                 Присоединяйтесь к 500+ пользователям, которые уже формируют привычки с HabitTracker
             </p>
-            <a href="#" class="cta-button large">Начать бесплатно</a>
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'habits_list' %}" class="cta-button">Продолжить</a>
+            {% else %}
+                <a href="{% url 'signin' %}" class="cta-button">Начать бесплатно</a>
+            {% endif %}
         </div>
     </section>
     <footer class="footer-simple">

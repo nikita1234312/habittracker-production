@@ -1,0 +1,161 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HabitTracker - Достижения</title>
+
+    <link rel="icon" type="image/png" href="{% static 'img/иконка.png' %}">
+    
+    <link rel="stylesheet" href="{% static 'css/achievements.css' %}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{% url 'main' %}" class="logo">HabitTracker</a>
+        <ul class="nav-links">
+            <li><a href="{% url 'main' %}">Главная</a></li>
+            <li><a href="{% url 'habits_list' %}">Привычки</a></li>
+            <li><a href="{% url 'achievements' %}">Достижения</a></li>
+            <li><a href="{% url 'about' %}">О нас</a></li>
+            {% if user.is_authenticated %}
+                <li class="profile-item">
+                    <a href="{% url 'profile' %}" class="profile-link">
+                        {% if profile.avatar %} 
+                            <img src="{{ profile.avatar.url }}" alt="" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
+                        {% else %}
+                            <div class="profile-avatar-link">{{ user.username|first }}</div>
+                        {% endif %}
+                        <span class="profile-text">Профиль</span>
+                    </a>
+                </li>
+            {% else %}
+                <li><a href="{% url 'signin' %}">Войти</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="habits-overview">
+            <div class="container-chart-line">
+                <div class="chart-title">График выполнения привычек</div>
+                <div class="chart-container">
+                    <canvas id="chartLine"></canvas>
+                </div>
+            </div>
+            
+            <div class="container-chart-pie">
+                <div class="chart-title">Полезные VS Вредные</div>
+                <div class="chart-container">
+                    <canvas id="chartPie"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+    const habitsData = JSON.parse('{{ habits_data|escapejs }}')
+
+    const chartLine = document.getElementById('chartLine');
+
+    new Chart(chartLine, {
+        type: 'line',
+        data: {
+            labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+            datasets: [{
+                label: 'Выполнено привычек',
+                data: habitsData.weekly_data,
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                borderWidth: 3,
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: '#667eea',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: habitsData.total_habits,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    },
+                    
+                    ticks: {
+                        stepsize: 1,
+
+                        callback: function(value) {
+                            if (Number.isInteger(value)) {
+                                return value + ' из ' + habitsData.total_habits;
+                            }
+                            return '';
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.03)'
+                    }
+                }
+            }
+        }
+    });
+
+
+    const chartPie = document.getElementById('chartPie');
+
+    new Chart(chartPie, {
+        type: 'doughnut',
+        data: {
+            labels: ['Полезные', 'Вредные'],
+            datasets: [{
+                data: [habitsData.useful, habitsData.harmful],
+                backgroundColor: [
+                    'rgba(16, 185, 129, 0.8)',
+                    'rgba(239, 68, 68, 0.8)'
+                ],
+                borderColor: [
+                    'rgba(16, 185, 129, 1)',
+                    'rgba(239, 68, 68, 1)'
+                ],
+                borderWidth: 2,
+                hoverOffset: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '60%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        font: {
+                            size: 11
+                        }
+                    }
+                }
+            }
+        }
+    });
+    </script>

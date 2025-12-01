@@ -63,6 +63,13 @@ body {
     background: #f8f9fa; 
 }
 
+.profile-text {
+    margin-left: 12px;
+}
+
+.profile-avatarp-link {
+    font-size: 14px;
+}
 /* Profile */
 .profile-header {
     position: relative;
@@ -385,3 +392,72 @@ body {
     }
 }
 
+
+.settings-content {
+    margin-top: 3.25rem;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e7e7e7;
+}
+
+.settings-content h2 {
+    color: #1a1a1a;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+}
+
+.settings-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.settings-card {
+    background: #ffffff;
+    border: 2px solid #dbdbdb;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.settings-card:hover {
+    border-color: #000000;
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.settings-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.settings-card h3 {
+    color: #1a1a1a;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.settings-card p {
+    color: #666666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.logout-block {
+    margin-top: 2rem;
+    margin-left: 2rem;
+
+}
+
+.logout {
+    color: #333333
+}
